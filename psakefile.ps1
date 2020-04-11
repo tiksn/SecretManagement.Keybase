@@ -24,7 +24,7 @@ Task PublishLocally -depends Test {
 }
 
 Task Test -Depends ImportModule {
-    Invoke-Pester -Script .\Tests.ps1
+    Invoke-Pester -Script .\test\Tests.ps1
 }
  
 Task ImportModule -Depends RemoveModule {

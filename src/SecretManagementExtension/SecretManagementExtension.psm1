@@ -13,7 +13,6 @@ function Set-Secret {
         [string] $VaultName,
         [hashtable] $AdditionalParameters
     )
-
 }
 
 function Remove-Secret {

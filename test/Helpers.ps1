@@ -12,5 +12,5 @@ function CommonBeforeAll {
 function CommonAfterAll {
     param (
     )
-    # Unregister-SecretsVault -Name $Script:VaultName
+    Unregister-SecretsVault -Name $Script:VaultName
 }

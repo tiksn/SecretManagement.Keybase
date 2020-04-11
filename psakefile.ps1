@@ -24,7 +24,10 @@ Task PublishLocally -depends Test {
 }
 
 Task Test -Depends ImportModule {
-    Invoke-Pester -Script .\test\Tests.ps1
+    $result = Invoke-Pester -Script .\test\Tests.ps1 -PassThru
+    if ($result.FailedCount -ne 0) {
+        throw 'Tests failed'
+    }
 }
  
 Task ImportModule -Depends RemoveModule {

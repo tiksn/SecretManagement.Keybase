@@ -1,3 +1,11 @@
+Task PublishPSGallery -depends PublishLocally {
+
+}
+
+Task PublishLocally -depends Test {
+
+}
+
 Task Test -Depends ImportModule {
     Invoke-Pester -Script .\Tests.ps1
 }

@@ -3,7 +3,16 @@ Task PublishPSGallery -depends PublishLocally {
 }
 
 Task PublishLocally -depends Test {
+    $documentsDir = [Environment]::GetFolderPath("MyDocuments")
+    $powerShellDir = Join-Path -Path $documentsDir -ChildPath 'PowerShell'
+    $modulesDir = Join-Path -Path $powerShellDir -ChildPath 'Modules'
+    $moduleDir = Join-Path -Path $modulesDir -ChildPath 'KeybaseSecretManagementExtension'
 
+    if (! (Test-Path -Path $moduleDir)) {
+        New-Item -Path $moduleDir -ItemType Directory | Out-Null
+    }
+
+    Copy-Item -Path .\src\* -Destination $moduleDir -Recurse
 }
 
 Task Test -Depends ImportModule {

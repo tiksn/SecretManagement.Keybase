@@ -1,6 +1,15 @@
 Set-StrictMode -Version Latest
 
 Describe 'Get-Secret' {
+    BeforeAll {
+        . .\test\Helpers.ps1
+        CommonBeforeAll
+    }
+    AfterAll {
+        . .\test\Helpers.ps1
+        CommonAfterAll
+    }
+    
     It 'For ByteArray' {
         
     }

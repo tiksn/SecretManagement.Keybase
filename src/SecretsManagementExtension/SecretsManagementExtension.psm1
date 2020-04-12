@@ -163,6 +163,10 @@ function Remove-Secret {
         [string] $VaultName,
         [hashtable] $AdditionalParameters
     )
+
+    Invoke-ApiCall -Method 'del' -AdditionalParameters $AdditionalParameters -EntryKey $Name
+
+    return $true
 }
 
 function Get-SecretInfo {

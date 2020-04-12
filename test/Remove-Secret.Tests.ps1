@@ -11,10 +11,22 @@ Describe 'Remove-Secret' {
     }
     
     It 'For ByteArray' {
-        
+        $name = "Name-$(Get-Random)"
+
+        $bufferSize = 2048
+        $buffer = [System.Byte[]]::new($bufferSize)
+        $random = [System.Random]::new()
+        $random.NextBytes($buffer)
+        $secret = $buffer
+        Add-Secret -Name $name -Secret $secret -Vault $Script:VaultName
+        Remove-Secret -Name $name -Vault $Script:VaultName
     }
 
     It 'For string' {
+        $name = "Name-$(Get-Random)"
+        $secret = "Secret-$(Get-Random)"
+        Add-Secret -Name $name -Secret $secret -Vault $Script:VaultName
+        Remove-Secret -Name $name -Vault $Script:VaultName
     }
 
     It 'For SecureString' {
@@ -26,6 +38,13 @@ Describe 'Remove-Secret' {
     }
 
     It 'For Hashtable' {
-        
+        $name = "Name-$(Get-Random)"
+        $secret = @{
+            "Key-$(Get-Random)" = "Value-$(Get-Random)"
+            "Key-$(Get-Random)" = "Value-$(Get-Random)"
+            "Key-$(Get-Random)" = "Value-$(Get-Random)"
+        }
+        Add-Secret -Name $name -Secret $secret -Vault $Script:VaultName
+        Remove-Secret -Name $name -Vault $Script:VaultName
     }
 }

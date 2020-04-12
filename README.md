@@ -4,6 +4,12 @@
 
 Secret Management Extension for [PowerShell Secrets Management](https://www.powershellgallery.com/packages/Microsoft.PowerShell.SecretsManagement/) using [Keybase](https://keybase.io/) KV store as a Vault.
 
+Check out package in [PS Gallery](https://www.powershellgallery.com/packages/KeybaseSecretManagementExtension/).
+
+```PowerShell
+Install-Module -Name KeybaseSecretManagementExtension
+```
+
 ## Secret type support
 
 - [X] ByteArray

@@ -1,4 +1,4 @@
-# KeybaseSecretManagementExtension
+# Keybase Secret Management Extension for PowerShell
 
 ![PowerShell Gallery](https://img.shields.io/powershellgallery/dt/KeybaseSecretManagementExtension)
 

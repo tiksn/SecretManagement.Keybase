@@ -107,7 +107,7 @@ function Invoke-ApiCall {
     $request = @{ 'method' = $Method; 'params' = @{'options' = $requestOptions } }
     $json = $request | ConvertTo-Json
     $resultJson = $json | keybase kvstore api
-    $result = $resultJson | ConvertFrom-Json -Depth 2 -AsHashtable
+    $result = $resultJson | ConvertFrom-Json -Depth 4 -AsHashtable
 
     return $result
 }
@@ -175,6 +175,36 @@ function Get-SecretInfo {
         [string] $VaultName,
         [hashtable] $AdditionalParameters
     )
+
+    $listResult = Invoke-ApiCall -Method 'list' -AdditionalParameters $AdditionalParameters
+
+    $pattern = [WildcardPattern]::Get($Filter, [System.Management.Automation.WildcardOptions]::IgnoreCase -bor [System.Management.Automation.WildcardOptions]::CultureInvariant)
+
+    $listKeys = $listResult.result.entryKeys | Select-Object -ExpandProperty entryKey
+    $listKeys = $listKeys | Where-Object { $pattern.IsMatch($_) }
+    foreach ($listKey in $listKeys) {
+        $result = Invoke-ApiCall -Method 'get' -AdditionalParameters $AdditionalParameters -EntryKey $listKey
+
+        if ($null -eq $result.result.entryValue) {
+            continue
+        }
+
+        $secret = ConvertFrom-MultiformatString -Value $result.result.entryValue
+        $type = if ($secret.gettype().IsArray) { [Microsoft.PowerShell.SecretManagement.SecretType]::ByteArray }
+        elseif ($secret -is [string]) { [Microsoft.PowerShell.SecretManagement.SecretType]::String }
+        elseif ($secret -is [securestring]) { [Microsoft.PowerShell.SecretManagement.SecretType]::SecureString }
+        elseif ($secret -is [PSCredential]) { [Microsoft.PowerShell.SecretManagement.SecretType]::PSCredential }
+        elseif ($secret -is [hashtable]) { [Microsoft.PowerShell.SecretManagement.SecretType]::Hashtable }
+        else { [Microsoft.PowerShell.SecretManagement.SecretType]::Unknown }
+        
+        Write-Output (
+            [Microsoft.PowerShell.SecretManagement.SecretInformation]::new(
+                $secretName,
+                $type,
+                $VaultName
+            )
+        )
+    }
 }
 
 function Test-SecretVault {

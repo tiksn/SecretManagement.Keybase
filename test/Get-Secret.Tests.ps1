@@ -9,9 +9,19 @@ Describe 'Get-Secret' {
         . .\test\Helpers.ps1
         CommonAfterAll
     }
-    
+
     It 'For ByteArray' {
-        
+        $name = "Name-$(Get-Random)"
+
+        $bufferSize = 2048
+        $buffer = [System.Byte[]]::new($bufferSize)
+        $random = [System.Random]::new()
+        $random.NextBytes($buffer)
+        $secret = $buffer
+        Add-Secret -Name $name -Secret $secret -Vault $Script:VaultName
+        $retrievedSecret = Get-Secret -Name $name -Vault $Script:VaultName
+
+        $secret | Should -Be $retrievedSecret
     }
 
     It 'For string' {

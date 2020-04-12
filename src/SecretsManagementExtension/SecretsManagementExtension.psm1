@@ -4,6 +4,7 @@ function ConvertTo-MultiformatString {
         [object]
         $EntryValue
     )
+
     if ($null -eq $EntryValue) {
         throw 'Secret cannot be null'
     }
@@ -26,6 +27,9 @@ function ConvertTo-MultiformatString {
     }
     $valueSetJson = $valueSet | ConvertTo-Json -Depth 2 -Compress
     return $valueSetJson
+}
+
+function ConvertFrom-MultiformatString {
 }
 
 function Invoke-ApiCall {
@@ -84,6 +88,11 @@ function Get-Secret {
         [string] $VaultName,
         [hashtable] $AdditionalParameters
     )
+
+    if ([WildcardPattern]::ContainsWildcardCharacters($Name))
+    {
+        throw "The Name parameter cannot contain wild card characters."
+    }
 }
 
 function Set-Secret {

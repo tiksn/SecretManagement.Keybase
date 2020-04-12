@@ -164,7 +164,7 @@ function Remove-Secret {
         [hashtable] $AdditionalParameters
     )
 
-    Invoke-ApiCall -Method 'del' -AdditionalParameters $AdditionalParameters -EntryKey $Name
+    $result = Invoke-ApiCall -Method 'del' -AdditionalParameters $AdditionalParameters -EntryKey $Name
 
     return $true
 }

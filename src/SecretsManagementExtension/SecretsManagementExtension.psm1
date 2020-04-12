@@ -18,6 +18,10 @@ function ConvertTo-MultiformatString {
             $valueSet.Add('bytes', [Convert]::ToBase64String($EntryValue))
             break 
         }
+        {$EntryValue -is [Hashtable]} {
+            $valueSet.Add('hashtable', $EntryValue)
+            break
+        }
         default { throw 'type is not supported' }
     }
     $valueSetJson = $valueSet | ConvertTo-Json -Depth 2 -Compress

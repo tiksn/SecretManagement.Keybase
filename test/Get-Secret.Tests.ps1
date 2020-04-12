@@ -21,7 +21,7 @@ Describe 'Get-Secret' {
         Add-Secret -Name $name -Secret $secret -Vault $Script:VaultName
         $retrievedSecret = Get-Secret -Name $name -Vault $Script:VaultName
 
-        $secret | Should -Be $retrievedSecret
+        $retrievedSecret | Should -Be $secret
     }
 
     It 'For string' {
@@ -30,7 +30,7 @@ Describe 'Get-Secret' {
         Add-Secret -Name $name -Secret $secret -Vault $Script:VaultName
         $retrievedSecret = Get-Secret -Name $name -Vault $Script:VaultName -AsPlainText
 
-        $secret | Should -Be $retrievedSecret
+        $retrievedSecret | Should -Be $secret
     }
 
     It 'For SecureString' {
@@ -42,6 +42,19 @@ Describe 'Get-Secret' {
     }
 
     It 'For Hashtable' {
+        $name = "Name-$(Get-Random)"
+        $secret = @{
+            "Key-$(Get-Random)" = "Value-$(Get-Random)"
+            "Key-$(Get-Random)" = "Value-$(Get-Random)"
+            "Key-$(Get-Random)" = "Value-$(Get-Random)"
+        }
+        Add-Secret -Name $name -Secret $secret -Vault $Script:VaultName
+        $retrievedSecret = Get-Secret -Name $name -Vault $Script:VaultName
 
+        $retrievedSecret | Should -Not -BeNullOrEmpty
+        
+        foreach ($key in $secret.Keys) {
+            $retrievedSecret[$key] | Should -Be $secret[$key]
+        }
     }
 }

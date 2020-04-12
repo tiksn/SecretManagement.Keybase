@@ -19,17 +19,37 @@ function ConvertTo-MultiformatString {
             $valueSet.Add('bytes', [Convert]::ToBase64String($EntryValue))
             break 
         }
-        {$EntryValue -is [Hashtable]} {
+        { $EntryValue -is [Hashtable] } {
             $valueSet.Add('hashtable', $EntryValue)
             break
         }
-        default { throw 'type is not supported' }
+        default {
+            Write-Error 'Type is not supported'
+            return 
+        }
     }
     $valueSetJson = $valueSet | ConvertTo-Json -Depth 2 -Compress
     return $valueSetJson
 }
 
 function ConvertFrom-MultiformatString {
+    param (
+        [Parameter(Mandatory = $true)]
+        [string]
+        $Value
+    )
+
+    $valueSet = $Value | ConvertFrom-Json -Depth 2 -AsHashtable
+    if ($valueSet.Keys.Count -ne 1) {
+        Write-Error 'Value set must contain only 1 value'
+        return
+    }
+    switch ($valueSet.Keys[0]) {
+        'string' { 
+            return $valueSet.Values[0]
+        }
+        default { }
+    }
 }
 
 function Invoke-ApiCall {
@@ -89,10 +109,19 @@ function Get-Secret {
         [hashtable] $AdditionalParameters
     )
 
-    if ([WildcardPattern]::ContainsWildcardCharacters($Name))
-    {
+    if ([WildcardPattern]::ContainsWildcardCharacters($Name)) {
         throw "The Name parameter cannot contain wild card characters."
     }
+
+    $result = Invoke-ApiCall -Method 'get' -AdditionalParameters $AdditionalParameters -EntryKey $Name
+
+    if ($null -eq $result.result.entryValue) {
+        return
+    }
+
+    $entryValue = ConvertFrom-MultiformatString -Value $result.result.entryValue
+
+    return $entryValue
 }
 
 function Set-Secret {

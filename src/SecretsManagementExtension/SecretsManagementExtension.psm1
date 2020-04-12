@@ -52,6 +52,9 @@ function ConvertFrom-MultiformatString {
             $secret = [Convert]::FromBase64String($valueSet.Values[0])
             return [byte[]] $secret
         }
+        'hashtable' { 
+            return $valueSet.Values[0]
+        }
         default {
             Write-Error 'Type deserialization is not supported'
             return

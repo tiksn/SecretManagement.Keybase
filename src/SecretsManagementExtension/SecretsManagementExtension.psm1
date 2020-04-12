@@ -24,7 +24,7 @@ function ConvertTo-MultiformatString {
             break
         }
         default {
-            Write-Error 'Type is not supported'
+            Write-Error 'Type serialization is not supported'
             return 
         }
     }
@@ -48,7 +48,10 @@ function ConvertFrom-MultiformatString {
         'string' { 
             return $valueSet.Values[0]
         }
-        default { }
+        default {
+            Write-Error 'Type deserialization is not supported'
+            return
+        }
     }
 }
 

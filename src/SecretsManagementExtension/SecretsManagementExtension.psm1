@@ -48,6 +48,10 @@ function ConvertFrom-MultiformatString {
         'string' { 
             return $valueSet.Values[0]
         }
+        'bytes' {
+            $secret = [Convert]::FromBase64String($valueSet.Values[0])
+            return [byte[]] $secret
+        }
         default {
             Write-Error 'Type deserialization is not supported'
             return
@@ -123,6 +127,10 @@ function Get-Secret {
     }
 
     $entryValue = ConvertFrom-MultiformatString -Value $result.result.entryValue
+
+    if ($entryValue.GetType().IsArray) {
+        return @(, [byte[]] $entryValue)
+    }
 
     return $entryValue
 }

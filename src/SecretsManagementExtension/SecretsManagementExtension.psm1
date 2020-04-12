@@ -4,7 +4,17 @@ function ConvertTo-MultiformatString {
         [object]
         $EntryValue
     )
-    $EntryValue.ToString() #TODO: Replace with real implementation
+    if ($null -eq $EntryValue) {
+        throw 'Secret cannot be null'
+    }
+
+    $valueSet = @{ }
+    switch ($EntryValue) {
+        { $EntryValue -is [string] } { $valueSet.Add('string', $EntryValue) }
+        default { throw 'type is not supported' }
+    }
+    $valueSetJson = $valueSet | ConvertTo-Json -Depth 2 -Compress
+    return $valueSetJson
 }
 
 function Invoke-ApiCall {
@@ -49,7 +59,7 @@ function Invoke-ApiCall {
         $requestOptions.Add('entryValue', $formattedValue);
     }
 
-    $request = @{ 'method' = $Method; 'params' = @{'options' = $requestOptions} }
+    $request = @{ 'method' = $Method; 'params' = @{'options' = $requestOptions } }
     $json = $request | ConvertTo-Json
     $resultJson = $json | keybase kvstore api
     $result = $resultJson | ConvertFrom-Json -Depth 2 -AsHashtable

@@ -10,7 +10,14 @@ function ConvertTo-MultiformatString {
 
     $valueSet = @{ }
     switch ($EntryValue) {
-        { $EntryValue -is [string] } { $valueSet.Add('string', $EntryValue) }
+        { $EntryValue -is [string] } {
+            $valueSet.Add('string', $EntryValue)
+            break
+        }
+        { $EntryValue -is [byte[]] } {
+            $valueSet.Add('bytes', [Convert]::ToBase64String($EntryValue))
+            break 
+        }
         default { throw 'type is not supported' }
     }
     $valueSetJson = $valueSet | ConvertTo-Json -Depth 2 -Compress

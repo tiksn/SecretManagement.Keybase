@@ -4,6 +4,7 @@ function ConvertTo-MultiformatString {
         [object]
         $EntryValue
     )
+
     if ($null -eq $EntryValue) {
         throw 'Secret cannot be null'
     }
@@ -18,14 +19,47 @@ function ConvertTo-MultiformatString {
             $valueSet.Add('bytes', [Convert]::ToBase64String($EntryValue))
             break 
         }
-        {$EntryValue -is [Hashtable]} {
+        { $EntryValue -is [Hashtable] } {
             $valueSet.Add('hashtable', $EntryValue)
             break
         }
-        default { throw 'type is not supported' }
+        default {
+            Write-Error 'Type serialization is not supported'
+            return 
+        }
     }
     $valueSetJson = $valueSet | ConvertTo-Json -Depth 2 -Compress
     return $valueSetJson
+}
+
+function ConvertFrom-MultiformatString {
+    param (
+        [Parameter(Mandatory = $true)]
+        [string]
+        $Value
+    )
+
+    $valueSet = $Value | ConvertFrom-Json -Depth 2 -AsHashtable
+    if ($valueSet.Keys.Count -ne 1) {
+        Write-Error 'Value set must contain only 1 value'
+        return
+    }
+    switch ($valueSet.Keys[0]) {
+        'string' { 
+            return $valueSet.Values[0]
+        }
+        'bytes' {
+            $secret = [Convert]::FromBase64String($valueSet.Values[0])
+            return [byte[]] $secret
+        }
+        'hashtable' { 
+            return $valueSet.Values[0]
+        }
+        default {
+            Write-Error 'Type deserialization is not supported'
+            return
+        }
+    }
 }
 
 function Invoke-ApiCall {
@@ -84,6 +118,24 @@ function Get-Secret {
         [string] $VaultName,
         [hashtable] $AdditionalParameters
     )
+
+    if ([WildcardPattern]::ContainsWildcardCharacters($Name)) {
+        throw "The Name parameter cannot contain wild card characters."
+    }
+
+    $result = Invoke-ApiCall -Method 'get' -AdditionalParameters $AdditionalParameters -EntryKey $Name
+
+    if ($null -eq $result.result.entryValue) {
+        return
+    }
+
+    $entryValue = ConvertFrom-MultiformatString -Value $result.result.entryValue
+
+    if ($entryValue.GetType().IsArray) {
+        return @(, [byte[]] $entryValue)
+    }
+
+    return $entryValue
 }
 
 function Set-Secret {

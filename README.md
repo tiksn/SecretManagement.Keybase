@@ -2,8 +2,8 @@
 
 ## Secret type support
 
-- [ ] ByteArray
-- [ ] String
+- [X] ByteArray
+- [X] String
 - [ ] SecureString
 - [ ] PSCredential
-- [ ] Hashtable
+- [X] Hashtable

@@ -212,4 +212,13 @@ function Test-SecretVault {
         [string] $VaultName,
         [hashtable] $AdditionalParameters
     )
+
+    $isValid = $true 
+
+    if (-not $AdditionalParameters.ContainsKey('namespace')) {
+        Write-Error '"namespace" additional parameters is required'
+        $isValid = $false
+    }
+
+    return $isValid
 }

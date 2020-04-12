@@ -11,7 +11,7 @@ Task PublishPSGallery -depends PublishLocally {
 }
 
 Task Test -Depends ImportModule {
-    $result = Invoke-Pester -Script .\test\Tests.ps1 -PassThru
+    $result = Invoke-Pester -Script .\test\*.Tests.ps1 -PassThru
 
     $leftover = $null
     '{"method": "list", "params": {"options": {"namespace": "test"}}}' | keybase kvstore api | Set-Variable leftover

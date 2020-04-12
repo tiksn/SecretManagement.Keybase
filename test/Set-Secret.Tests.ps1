@@ -11,7 +11,14 @@ Describe 'Set-Secret' {
     }
 
     It 'For ByteArray' {
-        
+        $name = "Name-$(Get-Random)"
+
+        $bufferSize = 2048
+        $buffer = [System.Byte[]]::new($bufferSize)
+        $random = [System.Random]::new()
+        $random.NextBytes($buffer)
+        $secret = $buffer
+        Add-Secret -Name $name -Secret $secret -Vault $Script:VaultName
     }
 
     It 'For string' {

@@ -36,6 +36,12 @@ Describe 'Set-Secret' {
     }
 
     It 'For Hashtable' {
-        
+        $name = "Name-$(Get-Random)"
+        $secret = @{
+            "Key-$(Get-Random)" = "Value-$(Get-Random)"
+            "Key-$(Get-Random)" = "Value-$(Get-Random)"
+            "Key-$(Get-Random)" = "Value-$(Get-Random)"
+        }
+        Add-Secret -Name $name -Secret $secret -Vault $Script:VaultName
     }
 }

@@ -10,6 +10,8 @@ Check out package in [PS Gallery](https://www.powershellgallery.com/packages/Key
 Install-Module -Name KeybaseSecretManagementExtension
 ```
 
+Usage
+
 ```PowerShell
 $SecretsVault = 'VaultName'
 $VaultParameters = @{ 

@@ -10,6 +10,16 @@ Check out package in [PS Gallery](https://www.powershellgallery.com/packages/Key
 Install-Module -Name KeybaseSecretManagementExtension
 ```
 
+```PowerShell
+$SecretsVault = 'VaultName'
+$VaultParameters = @{ 
+    namespace = 'NamespaceName'
+    team      = 'TeamName' # Optional
+}
+
+Register-SecretsVault -Name $SecretsVault -ModuleName 'KeybaseSecretManagementExtension' -VaultParameters $VaultParameters
+```
+
 ## Secret type support
 
 - [X] ByteArray

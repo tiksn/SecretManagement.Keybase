@@ -3,11 +3,11 @@ Set-StrictMode -Version Latest
 Describe 'Get-Secret' {
     BeforeAll {
         . .\test\Helpers.ps1
-        CommonBeforeAll
+        . CommonBeforeAll
     }
     AfterAll {
         . .\test\Helpers.ps1
-        CommonAfterAll
+        . CommonAfterAll
     }
 
     It 'For ByteArray' {
@@ -18,8 +18,8 @@ Describe 'Get-Secret' {
         $random = [System.Random]::new()
         $random.NextBytes($buffer)
         $secret = $buffer
-        Add-Secret -Name $name -Secret $secret -Vault $Script:VaultName
-        $retrievedSecret = Get-Secret -Name $name -Vault $Script:VaultName
+        Set-Secret -Name $name -Secret $secret -Vault $VaultName
+        $retrievedSecret = Get-Secret -Name $name -Vault $VaultName
 
         $retrievedSecret | Should -Be $secret
     }
@@ -27,8 +27,8 @@ Describe 'Get-Secret' {
     It 'For string' {
         $name = "Name-$(Get-Random)"
         $secret = "Secret-$(Get-Random)"
-        Add-Secret -Name $name -Secret $secret -Vault $Script:VaultName
-        $retrievedSecret = Get-Secret -Name $name -Vault $Script:VaultName -AsPlainText
+        Set-Secret -Name $name -Secret $secret -Vault $VaultName
+        $retrievedSecret = Get-Secret -Name $name -Vault $VaultName -AsPlainText
 
         $retrievedSecret | Should -Be $secret
     }
@@ -48,8 +48,8 @@ Describe 'Get-Secret' {
             "Key-$(Get-Random)" = "Value-$(Get-Random)"
             "Key-$(Get-Random)" = "Value-$(Get-Random)"
         }
-        Add-Secret -Name $name -Secret $secret -Vault $Script:VaultName
-        $retrievedSecret = Get-Secret -Name $name -Vault $Script:VaultName
+        Set-Secret -Name $name -Secret $secret -Vault $VaultName
+        $retrievedSecret = Get-Secret -Name $name -Vault $VaultName
 
         $retrievedSecret | Should -Not -BeNullOrEmpty
         

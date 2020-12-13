@@ -226,10 +226,10 @@ function Get-SecretInfo {
         elseif ($secret -is [PSCredential]) { [Microsoft.PowerShell.SecretManagement.SecretType]::PSCredential }
         elseif ($secret -is [hashtable]) { [Microsoft.PowerShell.SecretManagement.SecretType]::Hashtable }
         else { [Microsoft.PowerShell.SecretManagement.SecretType]::Unknown }
-        
+
         Write-Output (
             [Microsoft.PowerShell.SecretManagement.SecretInformation]::new(
-                $secretName,
+                $result.result.entryKey,
                 $type,
                 $VaultName
             )

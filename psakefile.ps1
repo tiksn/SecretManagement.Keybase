@@ -1,13 +1,13 @@
 Task PublishPSGallery -depends PublishLocally {
-    if (Get-Module -Name KeybaseSecretManagementExtension) {
-        Remove-Module -Name KeybaseSecretManagementExtension
+    if (Get-Module -Name SecretManagement.Keybase) {
+        Remove-Module -Name SecretManagement.Keybase
     }
 
-    Import-Module -Name KeybaseSecretManagementExtension
+    Import-Module -Name SecretManagement.Keybase
 
-    $apiKey = Get-Secret -Name 'TIKSN-KeybaseSecretManagementExtension-PSGallery-ApiKey' -AsPlainText
+    $apiKey = Get-Secret -Name 'TIKSN-SecretManagementKeybase-PSGallery-ApiKey' -AsPlainText
 
-    Publish-Module -Name KeybaseSecretManagementExtension -Repository PSGallery -NuGetApiKey $apiKey
+    Publish-Module -Name SecretManagement.Keybase -Repository PSGallery -NuGetApiKey $apiKey
 }
 
 Task Test -Depends ImportModule {
@@ -39,9 +39,9 @@ Task Test -Depends ImportModule {
 }
  
 Task ImportModule -Depends PublishLocally {
-    Import-Module .\src\KeybaseSecretManagementExtension.psd1
+    Import-Module .\src\SecretManagement.Keybase.psd1
     
-    if (!(Get-Module -Name KeybaseSecretManagementExtension)) {
+    if (!(Get-Module -Name SecretManagement.Keybase)) {
         throw 'Failed to import module.'
     }
 }
@@ -50,7 +50,7 @@ Task PublishLocally -depends RemoveModule {
     $documentsDir = [Environment]::GetFolderPath("MyDocuments")
     $powerShellDir = Join-Path -Path $documentsDir -ChildPath 'PowerShell'
     $modulesDir = Join-Path -Path $powerShellDir -ChildPath 'Modules'
-    $moduleDir = Join-Path -Path $modulesDir -ChildPath 'KeybaseSecretManagementExtension'
+    $moduleDir = Join-Path -Path $modulesDir -ChildPath 'SecretManagement.Keybase'
 
     if (Test-Path -Path $moduleDir) {
         Remove-Item $moduleDir -Force -Recurse
@@ -62,7 +62,7 @@ Task PublishLocally -depends RemoveModule {
 }
 
 Task RemoveModule {
-    if (Get-Module -Name KeybaseSecretManagementExtension) {
-        Remove-Module -Name KeybaseSecretManagementExtension
+    if (Get-Module -Name SecretManagement.Keybase) {
+        Remove-Module -Name SecretManagement.Keybase
     }
 }

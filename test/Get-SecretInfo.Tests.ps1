@@ -3,11 +3,11 @@ Set-StrictMode -Version Latest
 Describe 'Get-SecretInfo' {
     BeforeAll {
         . .\test\Helpers.ps1
-        CommonBeforeAll
+        . CommonBeforeAll
     }
     AfterAll {
         . .\test\Helpers.ps1
-        CommonAfterAll
+        . CommonAfterAll
     }
     
     It 'For ByteArray' {
@@ -18,15 +18,15 @@ Describe 'Get-SecretInfo' {
         $random = [System.Random]::new()
         $random.NextBytes($buffer)
         $secret = $buffer
-        Add-Secret -Name $name -Secret $secret -Vault $Script:VaultName
+        Set-Secret -Name $name -Secret $secret -Vault $VaultName
         $name = "Name-$(Get-Random)"
-        Add-Secret -Name $name -Secret $secret -Vault $Script:VaultName
+        Set-Secret -Name $name -Secret $secret -Vault $VaultName
 
-        $secretInfo = Get-SecretInfo -Name $name -Vault $Script:VaultName
+        $secretInfo = Get-SecretInfo -Name $name -Vault $VaultName
 
         $secretInfo | Should -Not -BeNullOrEmpty
 
-        $secretInfo = Get-SecretInfo -Name 'name-*' -Vault $Script:VaultName
+        $secretInfo = Get-SecretInfo -Name 'name-*' -Vault $VaultName
 
         $secretInfo | Should -Not -BeNullOrEmpty
     }
@@ -34,15 +34,15 @@ Describe 'Get-SecretInfo' {
     It 'For string' {
         $name = "Name-$(Get-Random)"
         $secret = "Secret-$(Get-Random)"
-        Add-Secret -Name $name -Secret $secret -Vault $Script:VaultName
+        Set-Secret -Name $name -Secret $secret -Vault $VaultName
         $name = "Name-$(Get-Random)"
-        Add-Secret -Name $name -Secret $secret -Vault $Script:VaultName
+        Set-Secret -Name $name -Secret $secret -Vault $VaultName
 
-        $secretInfo = Get-SecretInfo -Name $name -Vault $Script:VaultName
+        $secretInfo = Get-SecretInfo -Name $name -Vault $VaultName
 
         $secretInfo | Should -Not -BeNullOrEmpty
 
-        $secretInfo = Get-SecretInfo -Name 'name-*' -Vault $Script:VaultName
+        $secretInfo = Get-SecretInfo -Name 'name-*' -Vault $VaultName
 
         $secretInfo | Should -Not -BeNullOrEmpty
     }
@@ -62,15 +62,15 @@ Describe 'Get-SecretInfo' {
             "Key-$(Get-Random)" = "Value-$(Get-Random)"
             "Key-$(Get-Random)" = "Value-$(Get-Random)"
         }
-        Add-Secret -Name $name -Secret $secret -Vault $Script:VaultName
+        Set-Secret -Name $name -Secret $secret -Vault $VaultName
         $name = "Name-$(Get-Random)"
-        Add-Secret -Name $name -Secret $secret -Vault $Script:VaultName
+        Set-Secret -Name $name -Secret $secret -Vault $VaultName
 
-        $secretInfo = Get-SecretInfo -Name $name -Vault $Script:VaultName
+        $secretInfo = Get-SecretInfo -Name $name -Vault $VaultName
 
         $secretInfo | Should -Not -BeNullOrEmpty
 
-        $secretInfo = Get-SecretInfo -Name 'name-*' -Vault $Script:VaultName
+        $secretInfo = Get-SecretInfo -Name 'name-*' -Vault $VaultName
 
         $secretInfo | Should -Not -BeNullOrEmpty
     }

@@ -2,15 +2,19 @@
 function CommonBeforeAll {
     param (
     )
+
     $randomNumber = Get-Random
-    $Script:VaultName = "KeybaseSecretManagementExtension-$randomNumber"
+    $VaultName = "SecretManagement.Keybase-$randomNumber"
     $vaultParameters = @{'namespace' = 'test' }
     $vaultParameters.Add("Key-$(Get-Random)", "Value-$(Get-Random)")
-    Register-SecretsVault -Name $Script:VaultName -ModuleName 'KeybaseSecretManagementExtension' -VaultParameters $vaultParameters
+    Register-SecretVault -Name $VaultName -ModuleName 'SecretManagement.Keybase' -VaultParameters $vaultParameters
+    $Vault = Get-SecretVault -Name $VaultName
+    $Vault | Should -Not -Be $null
 }
 
 function CommonAfterAll {
     param (
     )
-    Unregister-SecretsVault -Name $Script:VaultName
+
+    Unregister-SecretVault -Name $VaultName
 }

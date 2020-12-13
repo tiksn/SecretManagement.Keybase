@@ -3,11 +3,11 @@ Set-StrictMode -Version Latest
 Describe 'Remove-Secret' {
     BeforeAll {
         . .\test\Helpers.ps1
-        CommonBeforeAll
+        . CommonBeforeAll
     }
     AfterAll {
         . .\test\Helpers.ps1
-        CommonAfterAll
+        . CommonAfterAll
     }
     
     It 'For ByteArray' {
@@ -18,15 +18,15 @@ Describe 'Remove-Secret' {
         $random = [System.Random]::new()
         $random.NextBytes($buffer)
         $secret = $buffer
-        Add-Secret -Name $name -Secret $secret -Vault $Script:VaultName
-        Remove-Secret -Name $name -Vault $Script:VaultName
+        Set-Secret -Name $name -Secret $secret -Vault $VaultName
+        Remove-Secret -Name $name -Vault $VaultName
     }
 
     It 'For string' {
         $name = "Name-$(Get-Random)"
         $secret = "Secret-$(Get-Random)"
-        Add-Secret -Name $name -Secret $secret -Vault $Script:VaultName
-        Remove-Secret -Name $name -Vault $Script:VaultName
+        Set-Secret -Name $name -Secret $secret -Vault $VaultName
+        Remove-Secret -Name $name -Vault $VaultName
     }
 
     It 'For SecureString' {
@@ -44,7 +44,7 @@ Describe 'Remove-Secret' {
             "Key-$(Get-Random)" = "Value-$(Get-Random)"
             "Key-$(Get-Random)" = "Value-$(Get-Random)"
         }
-        Add-Secret -Name $name -Secret $secret -Vault $Script:VaultName
-        Remove-Secret -Name $name -Vault $Script:VaultName
+        Set-Secret -Name $name -Secret $secret -Vault $VaultName
+        Remove-Secret -Name $name -Vault $VaultName
     }
 }

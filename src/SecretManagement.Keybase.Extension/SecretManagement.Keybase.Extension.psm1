@@ -67,7 +67,7 @@ function Invoke-ApiCall {
         [Parameter(Mandatory = $true)]
         [string]
         $Method,
-        [Parameter(Mandatory = $false)]
+        [Parameter(Mandatory = $true)]
         [hashtable]
         $AdditionalParameters,
         [Parameter(Mandatory = $false)]
@@ -113,11 +113,19 @@ function Invoke-ApiCall {
 }
 
 function Get-Secret {
+    [CmdletBinding()]
     param (
+        [Parameter(ValueFromPipelineByPropertyName)]
         [string] $Name,
+        [Parameter(ValueFromPipelineByPropertyName)]
         [string] $VaultName,
+        [Parameter(ValueFromPipelineByPropertyName)]
         [hashtable] $AdditionalParameters
     )
+
+    if ($AdditionalParameters.Verbose) {
+        $VerbosePreference = "Continue"
+    }
 
     if ([WildcardPattern]::ContainsWildcardCharacters($Name)) {
         throw "The Name parameter cannot contain wild card characters."
@@ -139,12 +147,21 @@ function Get-Secret {
 }
 
 function Set-Secret {
+    [CmdletBinding()]
     param (
+        [Parameter(ValueFromPipelineByPropertyName)]
         [string] $Name,
+        [Parameter(ValueFromPipelineByPropertyName)]
         [object] $Secret,
+        [Parameter(ValueFromPipelineByPropertyName)]
         [string] $VaultName,
+        [Parameter(ValueFromPipelineByPropertyName)]
         [hashtable] $AdditionalParameters
     )
+
+    if ($AdditionalParameters.Verbose) {
+        $VerbosePreference = "Continue"
+    }
 
     $result = Invoke-ApiCall -Method 'put' -AdditionalParameters $AdditionalParameters -EntryKey $Name -EntryValue $Secret
 
@@ -158,11 +175,19 @@ function Set-Secret {
 }
 
 function Remove-Secret {
+    [CmdletBinding()]
     param (
+        [Parameter(ValueFromPipelineByPropertyName)]
         [string] $Name,
+        [Parameter(ValueFromPipelineByPropertyName)]
         [string] $VaultName,
+        [Parameter(ValueFromPipelineByPropertyName)]
         [hashtable] $AdditionalParameters
     )
+
+    if ($AdditionalParameters.Verbose) {
+        $VerbosePreference = "Continue"
+    }
 
     $result = Invoke-ApiCall -Method 'del' -AdditionalParameters $AdditionalParameters -EntryKey $Name
 
@@ -170,11 +195,16 @@ function Remove-Secret {
 }
 
 function Get-SecretInfo {
+    [CmdletBinding()]
     param(
         [string] $Filter,
         [string] $VaultName,
         [hashtable] $AdditionalParameters
     )
+
+    if ($AdditionalParameters.Verbose) {
+        $VerbosePreference = "Continue"
+    }
 
     $listResult = Invoke-ApiCall -Method 'list' -AdditionalParameters $AdditionalParameters
 
@@ -208,10 +238,17 @@ function Get-SecretInfo {
 }
 
 function Test-SecretVault {
+    [CmdletBinding()]
     param (
+        [Parameter(ValueFromPipelineByPropertyName)]
         [string] $VaultName,
+        [Parameter(ValueFromPipelineByPropertyName)]
         [hashtable] $AdditionalParameters
     )
+
+    if ($AdditionalParameters.Verbose) {
+        $VerbosePreference = "Continue"
+    }
 
     $isValid = $true 
 

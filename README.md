@@ -1,13 +1,13 @@
 # Keybase Secret Management Extension for PowerShell
 
-![PowerShell Gallery](https://img.shields.io/powershellgallery/dt/KeybaseSecretManagementExtension)
+![PowerShell Gallery](https://img.shields.io/powershellgallery/dt/SecretManagement.Keybase)
 
 Secret Management Extension for [PowerShell Secrets Management](https://www.powershellgallery.com/packages/Microsoft.PowerShell.SecretsManagement/) using [Keybase](https://keybase.io/) KV store as a Vault.
 
-Check out package in [PS Gallery](https://www.powershellgallery.com/packages/KeybaseSecretManagementExtension/).
+Check out package in [PS Gallery](https://www.powershellgallery.com/packages/SecretManagement.Keybase/).
 
 ```PowerShell
-Install-Module -Name KeybaseSecretManagementExtension
+Install-Module -Name SecretManagement.Keybase
 ```
 
 Usage
@@ -19,7 +19,7 @@ $VaultParameters = @{
     team      = 'TeamName' # Optional
 }
 
-Register-SecretsVault -Name $SecretsVault -ModuleName 'KeybaseSecretManagementExtension' -VaultParameters $VaultParameters
+Register-SecretsVault -Name $SecretsVault -ModuleName 'SecretManagement.Keybase' -VaultParameters $VaultParameters
 ```
 
 ## Secret type support

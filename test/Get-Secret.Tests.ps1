@@ -49,10 +49,10 @@ Describe 'Get-Secret' {
             "Key-$(Get-Random)" = "Value-$(Get-Random)"
         }
         Set-Secret -Name $name -Secret $secret -Vault $VaultName
-        $retrievedSecret = Get-Secret -Name $name -Vault $VaultName
+        $retrievedSecret = Get-Secret -Name $name -Vault $VaultName -AsPlainText
 
         $retrievedSecret | Should -Not -BeNullOrEmpty
-        
+
         foreach ($key in $secret.Keys) {
             $retrievedSecret[$key] | Should -Be $secret[$key]
         }

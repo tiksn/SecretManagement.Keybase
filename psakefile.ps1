@@ -10,8 +10,12 @@ Task PublishPSGallery -depends PublishLocally {
     Publish-Module -Name SecretManagement.Keybase -Repository PSGallery -NuGetApiKey $apiKey
 }
 
-Task Test -Depends ImportModule {
+Task Test -depends ImportModule {
     $result = Invoke-Pester -Script .\test\*.Tests.ps1 -PassThru
+
+    foreach ($leftoverVault in (Get-SecretVault -Name 'SecretManagement.Keybase-*')) {
+        Unregister-SecretVault -Name $leftoverVault.Name
+    }
 
     $leftover = $null
     '{"method": "list", "params": {"options": {"namespace": "test"}}}' | keybase kvstore api | Set-Variable leftover
@@ -38,7 +42,7 @@ Task Test -Depends ImportModule {
     }
 }
  
-Task ImportModule -Depends PublishLocally {
+Task ImportModule -depends PublishLocally {
     Import-Module .\src\SecretManagement.Keybase.psd1
     
     if (!(Get-Module -Name SecretManagement.Keybase)) {
@@ -47,7 +51,7 @@ Task ImportModule -Depends PublishLocally {
 }
 
 Task PublishLocally -depends RemoveModule {
-    $documentsDir = [Environment]::GetFolderPath("MyDocuments")
+    $documentsDir = [Environment]::GetFolderPath('MyDocuments')
     $powerShellDir = Join-Path -Path $documentsDir -ChildPath 'PowerShell'
     $modulesDir = Join-Path -Path $powerShellDir -ChildPath 'Modules'
     $moduleDir = Join-Path -Path $modulesDir -ChildPath 'SecretManagement.Keybase'

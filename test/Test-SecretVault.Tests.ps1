@@ -3,10 +3,16 @@ Set-StrictMode -Version Latest
 Describe 'Test-SecretVault' {
     BeforeAll {
         . .\test\Helpers.ps1
-        CommonBeforeAll
+        . CommonBeforeAll
     }
     AfterAll {
         . .\test\Helpers.ps1
-        CommonAfterAll
+        . CommonAfterAll
+    }
+
+    It 'Test-SecretVault' {
+        $result = Test-SecretVault -Name $VaultName
+
+        $result | Should -Be $true
     }
 }

@@ -48,20 +48,22 @@ function ConvertFrom-MultiformatString {
     )
 
     $valueSet = $Value | ConvertFrom-Json -Depth 2 -AsHashtable
-    if ($valueSet.Keys.Count -ne 1) {
-        Write-Error 'Value set must contain only 1 value'
-        return
-    }
-    switch ($valueSet.Keys[0]) {
-        'string' { 
+    switch ($valueSet) {
+        { $valueSet.ContainsKey('string') } { 
             return $valueSet.Values[0]
         }
-        'bytes' {
-            $secret = [Convert]::FromBase64String($valueSet.Values[0])
+        { $valueSet.ContainsKey('bytes') } {
+            $secret = [System.Convert]::FromBase64String($valueSet.Values[0])
             return [byte[]] $secret
         }
-        'hashtable' { 
+        { $valueSet.ContainsKey('hashtable') } { 
             return $valueSet.Values[0]
+        }
+        { $valueSet.ContainsKey('secure-string-key') } {
+            $base64Key = $valueSet['secure-string-key']
+            $key = [System.Convert]::FromBase64String($base64Key)
+            $encryptedValue = $valueSet['secure-string-value']
+            return ConvertTo-SecureString -String $encryptedValue -Key $key
         }
         default {
             Write-Error 'Type deserialization is not supported'

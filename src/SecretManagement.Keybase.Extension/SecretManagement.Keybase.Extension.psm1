@@ -23,6 +23,14 @@ function ConvertTo-MultiformatString {
             $valueSet.Add('hashtable', $EntryValue)
             break
         }
+        { $EntryValue -is [System.Security.SecureString] } {
+            $key = (1..32 | ForEach-Object { [byte](Get-Random -Max 256) })
+            $base64Key = [System.Convert]::ToBase64String($key)
+            $encryptedValue = ConvertFrom-SecureString -SecureString $EntryValue -Key $key
+            $valueSet.Add('secure-string-key', $base64Key)
+            $valueSet.Add('secure-string-value', $encryptedValue)
+            break
+        }
         default {
             Write-Error 'Type serialization is not supported'
             return 
@@ -124,11 +132,11 @@ function Get-Secret {
     )
 
     if ($AdditionalParameters.Verbose) {
-        $VerbosePreference = "Continue"
+        $VerbosePreference = 'Continue'
     }
 
     if ([WildcardPattern]::ContainsWildcardCharacters($Name)) {
-        throw "The Name parameter cannot contain wild card characters."
+        throw 'The Name parameter cannot contain wild card characters.'
     }
 
     $result = Invoke-ApiCall -Method 'get' -AdditionalParameters $AdditionalParameters -EntryKey $Name
@@ -160,7 +168,7 @@ function Set-Secret {
     )
 
     if ($AdditionalParameters.Verbose) {
-        $VerbosePreference = "Continue"
+        $VerbosePreference = 'Continue'
     }
 
     $result = Invoke-ApiCall -Method 'put' -AdditionalParameters $AdditionalParameters -EntryKey $Name -EntryValue $Secret
@@ -186,7 +194,7 @@ function Remove-Secret {
     )
 
     if ($AdditionalParameters.Verbose) {
-        $VerbosePreference = "Continue"
+        $VerbosePreference = 'Continue'
     }
 
     $result = Invoke-ApiCall -Method 'del' -AdditionalParameters $AdditionalParameters -EntryKey $Name
@@ -203,7 +211,7 @@ function Get-SecretInfo {
     )
 
     if ($AdditionalParameters.Verbose) {
-        $VerbosePreference = "Continue"
+        $VerbosePreference = 'Continue'
     }
 
     $listResult = Invoke-ApiCall -Method 'list' -AdditionalParameters $AdditionalParameters
@@ -247,7 +255,7 @@ function Test-SecretVault {
     )
 
     if ($AdditionalParameters.Verbose) {
-        $VerbosePreference = "Continue"
+        $VerbosePreference = 'Continue'
     }
 
     $isValid = $true 

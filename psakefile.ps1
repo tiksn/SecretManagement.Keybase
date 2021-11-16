@@ -11,7 +11,7 @@ Task PublishPSGallery -depends PublishLocally {
 }
 
 Task Test -depends ImportModule {
-    $result = Invoke-Pester -Script .\test\*.Tests.ps1 -PassThru
+    $result = Invoke-Pester -Script .\test\*.Tests.ps1 -PassThru -FullNameFilter $FullNameFilter
 
     foreach ($leftoverVault in (Get-SecretVault -Name 'SecretManagement.Keybase-*')) {
         Unregister-SecretVault -Name $leftoverVault.Name

@@ -23,6 +23,14 @@ function ConvertTo-MultiformatString {
             $valueSet.Add('hashtable', $EntryValue)
             break
         }
+        { $EntryValue -is [System.Security.SecureString] } {
+            $key = (1..32 | ForEach-Object { [byte](Get-Random -Max 256) })
+            $base64Key = [System.Convert]::ToBase64String($key)
+            $encryptedValue = ConvertFrom-SecureString -SecureString $EntryValue -Key $key
+            $valueSet.Add('secure-string-key', $base64Key)
+            $valueSet.Add('secure-string-value', $encryptedValue)
+            break
+        }
         default {
             Write-Error 'Type serialization is not supported'
             return 
@@ -40,20 +48,22 @@ function ConvertFrom-MultiformatString {
     )
 
     $valueSet = $Value | ConvertFrom-Json -Depth 2 -AsHashtable
-    if ($valueSet.Keys.Count -ne 1) {
-        Write-Error 'Value set must contain only 1 value'
-        return
-    }
-    switch ($valueSet.Keys[0]) {
-        'string' { 
+    switch ($valueSet) {
+        { $valueSet.ContainsKey('string') } { 
             return $valueSet.Values[0]
         }
-        'bytes' {
-            $secret = [Convert]::FromBase64String($valueSet.Values[0])
+        { $valueSet.ContainsKey('bytes') } {
+            $secret = [System.Convert]::FromBase64String($valueSet.Values[0])
             return [byte[]] $secret
         }
-        'hashtable' { 
+        { $valueSet.ContainsKey('hashtable') } { 
             return $valueSet.Values[0]
+        }
+        { $valueSet.ContainsKey('secure-string-key') } {
+            $base64Key = $valueSet['secure-string-key']
+            $key = [System.Convert]::FromBase64String($base64Key)
+            $encryptedValue = $valueSet['secure-string-value']
+            return ConvertTo-SecureString -String $encryptedValue -Key $key
         }
         default {
             Write-Error 'Type deserialization is not supported'
@@ -124,11 +134,11 @@ function Get-Secret {
     )
 
     if ($AdditionalParameters.Verbose) {
-        $VerbosePreference = "Continue"
+        $VerbosePreference = 'Continue'
     }
 
     if ([WildcardPattern]::ContainsWildcardCharacters($Name)) {
-        throw "The Name parameter cannot contain wild card characters."
+        throw 'The Name parameter cannot contain wild card characters.'
     }
 
     $result = Invoke-ApiCall -Method 'get' -AdditionalParameters $AdditionalParameters -EntryKey $Name
@@ -160,7 +170,7 @@ function Set-Secret {
     )
 
     if ($AdditionalParameters.Verbose) {
-        $VerbosePreference = "Continue"
+        $VerbosePreference = 'Continue'
     }
 
     $result = Invoke-ApiCall -Method 'put' -AdditionalParameters $AdditionalParameters -EntryKey $Name -EntryValue $Secret
@@ -186,7 +196,7 @@ function Remove-Secret {
     )
 
     if ($AdditionalParameters.Verbose) {
-        $VerbosePreference = "Continue"
+        $VerbosePreference = 'Continue'
     }
 
     $result = Invoke-ApiCall -Method 'del' -AdditionalParameters $AdditionalParameters -EntryKey $Name
@@ -203,7 +213,7 @@ function Get-SecretInfo {
     )
 
     if ($AdditionalParameters.Verbose) {
-        $VerbosePreference = "Continue"
+        $VerbosePreference = 'Continue'
     }
 
     $listResult = Invoke-ApiCall -Method 'list' -AdditionalParameters $AdditionalParameters
@@ -247,7 +257,7 @@ function Test-SecretVault {
     )
 
     if ($AdditionalParameters.Verbose) {
-        $VerbosePreference = "Continue"
+        $VerbosePreference = 'Continue'
     }
 
     $isValid = $true 

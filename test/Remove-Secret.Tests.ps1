@@ -30,7 +30,11 @@ Describe 'Remove-Secret' {
     }
 
     It 'For SecureString' {
-        
+        $name = "Name-$(Get-Random)"
+        $plainTextSecret = "Secret-$(Get-Random)"
+        $secret = ConvertTo-SecureString -String $plainTextSecret -AsPlainText
+        Set-Secret -Name $name -Secret $secret -Vault $VaultName
+        Remove-Secret -Name $name -Vault $VaultName
     }
 
     It 'For PSCredential' {

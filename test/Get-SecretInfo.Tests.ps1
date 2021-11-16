@@ -48,7 +48,20 @@ Describe 'Get-SecretInfo' {
     }
 
     It 'For SecureString' {
-        
+        $name = "Name-$(Get-Random)"
+        $plainTextSecret = "Secret-$(Get-Random)"
+        $secret = ConvertTo-SecureString -String $plainTextSecret -AsPlainText
+        Set-Secret -Name $name -Secret $secret -Vault $VaultName
+        $name = "Name-$(Get-Random)"
+        Set-Secret -Name $name -Secret $secret -Vault $VaultName
+
+        $secretInfo = Get-SecretInfo -Name $name -Vault $VaultName
+
+        $secretInfo | Should -Not -BeNullOrEmpty
+
+        $secretInfo = Get-SecretInfo -Name 'name-*' -Vault $VaultName
+
+        $secretInfo | Should -Not -BeNullOrEmpty
     }
 
     It 'For PSCredential' {

@@ -28,7 +28,10 @@ Describe 'Set-Secret' {
     }
 
     It 'For SecureString' {
-        
+        $name = "Name-$(Get-Random)"
+        $plainTextSecret = "Secret-$(Get-Random)"
+        $secret = ConvertTo-SecureString -String $plainTextSecret -AsPlainText
+        Set-Secret -Name $name -SecureStringSecret $secret -Vault $VaultName
     }
 
     It 'For PSCredential' {

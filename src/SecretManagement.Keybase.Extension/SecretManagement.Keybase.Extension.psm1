@@ -31,6 +31,15 @@ function ConvertTo-MultiformatString {
             $valueSet.Add('secure-string-value', $encryptedValue)
             break
         }
+        { $EntryValue -is [System.Management.Automation.PSCredential] } {
+            $key = (1..32 | ForEach-Object { [byte](Get-Random -Max 256) })
+            $base64Key = [System.Convert]::ToBase64String($key)
+            $encryptedPassword = ConvertFrom-SecureString -SecureString $EntryValue.Password -Key $key
+            $valueSet.Add('credential-username', $EntryValue.UserName)
+            $valueSet.Add('credential-password-key', $base64Key)
+            $valueSet.Add('credential-password-value', $encryptedPassword)
+            break
+        }
         default {
             Write-Error 'Type serialization is not supported'
             return 
@@ -64,6 +73,15 @@ function ConvertFrom-MultiformatString {
             $key = [System.Convert]::FromBase64String($base64Key)
             $encryptedValue = $valueSet['secure-string-value']
             return ConvertTo-SecureString -String $encryptedValue -Key $key
+        }
+        { $valueSet.ContainsKey('credential-password-key') } {
+            $userName = $valueSet['credential-username']
+            $base64Key = $valueSet['credential-password-key']
+            $key = [System.Convert]::FromBase64String($base64Key)
+            $encryptedPassword = $valueSet['credential-password-value']
+            $protectedPassword = ConvertTo-SecureString -String $encryptedPassword -Key $key
+            [pscredential]$secretCredential = New-Object System.Management.Automation.PSCredential -ArgumentList ($userName, $protectedPassword)
+            return $secretCredential
         }
         default {
             Write-Error 'Type deserialization is not supported'

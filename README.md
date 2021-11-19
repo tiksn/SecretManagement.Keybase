@@ -26,6 +26,6 @@ Register-SecretsVault -Name $SecretsVault -ModuleName 'SecretManagement.Keybase'
 
 - [X] ByteArray
 - [X] String
-- [ ] SecureString
-- [ ] PSCredential
+- [X] SecureString
+- [X] PSCredential
 - [X] Hashtable

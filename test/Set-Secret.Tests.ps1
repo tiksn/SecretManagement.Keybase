@@ -35,7 +35,12 @@ Describe 'Set-Secret' {
     }
 
     It 'For PSCredential' {
-        
+        $name = "Name-$(Get-Random)"
+        $userName = "UserName-$(Get-Random)"
+        $plainTextPassword = "Password-$(Get-Random)"
+        $protectedPassword = ConvertTo-SecureString -String $plainTextPassword -AsPlainText
+        [pscredential]$secretCredential = New-Object System.Management.Automation.PSCredential -ArgumentList ($userName, $protectedPassword)
+        Set-Secret -Name $name -Secret $secretCredential -Vault $VaultName
     }
 
     It 'For Hashtable' {

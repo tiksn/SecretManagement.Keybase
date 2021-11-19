@@ -38,7 +38,13 @@ Describe 'Remove-Secret' {
     }
 
     It 'For PSCredential' {
-        
+        $name = "Name-$(Get-Random)"
+        $userName = "UserName-$(Get-Random)"
+        $plainTextPassword = "Password-$(Get-Random)"
+        $protectedPassword = ConvertTo-SecureString -String $plainTextPassword -AsPlainText
+        [pscredential]$secretCredential = New-Object System.Management.Automation.PSCredential ($userName, $protectedPassword)
+        Set-Secret -Name $name -Secret $secretCredential -Vault $VaultName
+        Remove-Secret -Name $name -Vault $VaultName
     }
 
     It 'For Hashtable' {

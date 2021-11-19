@@ -65,7 +65,22 @@ Describe 'Get-SecretInfo' {
     }
 
     It 'For PSCredential' {
-        
+        $name = "Name-$(Get-Random)"
+        $userName = "UserName-$(Get-Random)"
+        $plainTextPassword = "Password-$(Get-Random)"
+        $protectedPassword = ConvertTo-SecureString -String $plainTextPassword -AsPlainText
+        [pscredential]$secretCredential = New-Object System.Management.Automation.PSCredential ($userName, $protectedPassword)
+        Set-Secret -Name $name -Secret $secretCredential -Vault $VaultName
+        $name = "Name-$(Get-Random)"
+        Set-Secret -Name $name -Secret $secretCredential -Vault $VaultName
+
+        $secretInfo = Get-SecretInfo -Name $name -Vault $VaultName
+
+        $secretInfo | Should -Not -BeNullOrEmpty
+
+        $secretInfo = Get-SecretInfo -Name 'name-*' -Vault $VaultName
+
+        $secretInfo | Should -Not -BeNullOrEmpty
     }
 
     It 'For Hashtable' {

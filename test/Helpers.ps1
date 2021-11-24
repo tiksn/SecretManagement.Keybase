@@ -5,9 +5,7 @@ function CommonBeforeAll {
 
     $randomNumber = Get-Random
     $VaultName = "SecretManagement.Keybase-$randomNumber"
-    $vaultParameters = @{'namespace' = 'test' }
-    $vaultParameters.Add("Key-$(Get-Random)", "Value-$(Get-Random)")
-    Register-SecretVault -Name $VaultName -ModuleName 'SecretManagement.Keybase' -VaultParameters $vaultParameters
+    Register-KeybaseSecretVault -Name $VaultName -Namespace 'test'
     $Vault = Get-SecretVault -Name $VaultName
     $Vault | Should -Not -Be $null
 }

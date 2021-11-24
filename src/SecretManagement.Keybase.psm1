@@ -19,11 +19,17 @@ function Register-KeybaseSecretVault {
     }
     
     process {
-        $vaultParameters = @{ 
-            namespace = $Namespace
-            team      = $Team
+        if ($Team) {
+            $vaultParameters = @{ 
+                namespace = $Namespace
+                team      = $Team
+            }
         }
-
+        else {
+            $vaultParameters = @{ 
+                namespace = $Namespace
+            }
+        }
         Register-SecretVault -Name $Name -ModuleName 'SecretManagement.Keybase' -VaultParameters $vaultParameters
     }
     

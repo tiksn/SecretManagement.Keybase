@@ -1,14 +1,15 @@
 function Register-KeybaseSecretVault {
     [CmdletBinding(DefaultParameterSetName = 'WithoutTeam')]
     param (
-        [Parameter(ParameterSetName = 'WithoutTeam')]
-        [Parameter(ParameterSetName = 'WithTeam')]
+        [Parameter(Mandatory = $true, ParameterSetName = 'WithoutTeam')]
+        [Parameter(Mandatory = $true, ParameterSetName = 'WithTeam')]
         [string]
-        $SecretVault,
-        [Parameter(ParameterSetName = 'WithoutTeam')]
+        $Name,
+        [Parameter(Mandatory = $true, ParameterSetName = 'WithoutTeam')]
+        [Parameter(Mandatory = $true, ParameterSetName = 'WithTeam')]
         [string]
         $Namespace ,
-        [Parameter(ParameterSetName = 'WithTeam')]
+        [Parameter(Mandatory = $true, ParameterSetName = 'WithTeam')]
         [string]
         $Team
     )
@@ -23,7 +24,7 @@ function Register-KeybaseSecretVault {
             team      = $Team
         }
 
-        Register-SecretsVault -Name $SecretVault -ModuleName 'SecretManagement.Keybase' -VaultParameters $vaultParameters
+        Register-SecretsVault -Name $Name -ModuleName 'SecretManagement.Keybase' -VaultParameters $vaultParameters
 
     }
     

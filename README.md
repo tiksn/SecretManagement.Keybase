@@ -13,13 +13,13 @@ Install-Module -Name SecretManagement.Keybase
 Usage
 
 ```PowerShell
-$SecretsVault = 'VaultName'
-$VaultParameters = @{ 
-    namespace = 'NamespaceName'
-    team      = 'TeamName' # Optional
-}
+Register-KeybaseSecretVault -Name 'VaultName' -Namespace 'NamespaceName'
+```
 
-Register-SecretsVault -Name $SecretsVault -ModuleName 'SecretManagement.Keybase' -VaultParameters $VaultParameters
+Or
+
+```PowerShell
+Register-KeybaseSecretVault -Name 'VaultName' -Namespace 'NamespaceName' -Team 'TeamName'
 ```
 
 ## Secret type support

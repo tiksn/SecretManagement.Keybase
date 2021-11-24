@@ -24,8 +24,7 @@ function Register-KeybaseSecretVault {
             team      = $Team
         }
 
-        Register-SecretsVault -Name $Name -ModuleName 'SecretManagement.Keybase' -VaultParameters $vaultParameters
-
+        Register-SecretVault -Name $Name -ModuleName 'SecretManagement.Keybase' -VaultParameters $vaultParameters
     }
     
     end {
